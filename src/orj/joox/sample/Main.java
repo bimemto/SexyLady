@@ -22,8 +22,12 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -36,6 +40,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class Main extends JFrame implements ActionListener {
 
@@ -43,6 +48,9 @@ public class Main extends JFrame implements ActionListener {
 	private JButton btnBrowseKeystore;
 	private JButton btnChoose;
 	private JFileChooser fc;
+	private String inputAPKPath, keystorePath, keystorePass, keystoreAlias,
+			outputApkPath;
+	private JTextArea textPane;
 
 	public Main() {
 		fc = new JFileChooser();
@@ -83,6 +91,7 @@ public class Main extends JFrame implements ActionListener {
 		txtKeystorePass.setBounds(183, 80, 237, 39);
 		getContentPane().add(txtKeystorePass);
 		txtKeystorePass.setColumns(10);
+		txtKeystorePass.setText("123465@appota");
 
 		label = new JLabel("");
 		label.setBounds(366, 80, 183, 39);
@@ -96,6 +105,7 @@ public class Main extends JFrame implements ActionListener {
 		txtKeystoreAlias.setBounds(183, 119, 237, 39);
 		getContentPane().add(txtKeystoreAlias);
 		txtKeystoreAlias.setColumns(10);
+		txtKeystoreAlias.setText("appota");
 
 		label_1 = new JLabel("");
 		label_1.setBounds(366, 119, 183, 39);
@@ -120,19 +130,20 @@ public class Main extends JFrame implements ActionListener {
 		getContentPane().add(label_2);
 
 		btnRock = new JButton("Rock!");
-		btnRock.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
+		btnRock.addActionListener(this);
 		btnRock.setBounds(183, 251, 183, 39);
+
 		getContentPane().add(btnRock);
 
 		label_3 = new JLabel("");
 		label_3.setBounds(366, 197, 183, 39);
 		getContentPane().add(label_3);
 
-		textPane = new JTextPane();
+		textPane = new JTextArea();
 		textPane.setBounds(10, 302, 569, 207);
+		JScrollPane scrollPane = new JScrollPane(textPane); 
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		textPane.setEditable(false);
 		getContentPane().add(textPane);
 	}
 
@@ -153,56 +164,12 @@ public class Main extends JFrame implements ActionListener {
 	private JLabel label_1;
 	private JLabel label_2;
 	private JLabel label_3;
-	private JTextPane textPane;
 
 	public static void main(String[] args) {
 		Main main = new Main();
 		main.setSize(586, 537);
 		main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		main.setVisible(true);
-		// digApkFile(projectName + ".apk");
-		// try {
-		// DocumentBuilderFactory documentBuilderFactory =
-		// DocumentBuilderFactory.newInstance();
-		// DocumentBuilder documentBuilder =
-		// documentBuilderFactory.newDocumentBuilder();
-		// Document document = documentBuilder.parse(projectName +
-		// "/AndroidManifest.xml");
-		// rootElement = document.getDocumentElement();
-		// application =
-		// rootElement.getElementsByTagName("application").item(0);
-		// packageName =
-		// rootElement.getAttributes().getNamedItem("package").getNodeValue();
-		// System.out.println(packageName);
-		// // mainClassName = getMainClassName(document);
-		// replaceMainActivity(document);
-		// addPermissions(document);
-		// writeToFile(document);
-		// } catch (SAXException e) {
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// } catch (ParserConfigurationException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// File srcFolder = new File("com");
-		// File destFolder = new File(projectName + "/smali/com");
-		//
-		// // make sure source exists
-		// if (!srcFolder.exists()) {
-		// System.out.println("Directory does not exist.");
-		// System.exit(0);
-		// } else {
-		// try {
-		// copyFolder(srcFolder, destFolder);
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// replaceMainActivitySmali();
-		// buildApk(projectName);
-		// signApk(projectName + "/dist/" + projectName + ".apk");
 	}
 
 	// private static void unzipApk(String path) {
@@ -222,7 +189,7 @@ public class Main extends JFrame implements ActionListener {
 	// }
 	// }
 
-	private static void digApkFile(String filePath) {
+	private void digApkFile(String filePath) {
 		ProcessBuilder ps = new ProcessBuilder("chmod", "a+x", "apktool");
 		ps.redirectErrorStream(true);
 		Process pr;
@@ -234,14 +201,17 @@ public class Main extends JFrame implements ActionListener {
 			pr.waitFor();
 			ps = new ProcessBuilder("./apktool", "d", filePath);
 			pr = ps.start();
-			BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					pr.getInputStream()));
 			String line;
 			while ((line = in.readLine()) != null) {
-				System.out.println(line);
+				//System.out.println(line);
+				textPane.append(line + "\n");
 			}
 			pr.waitFor();
 			in.close();
-			System.out.println("dig apk finished");
+			//System.out.println("dig apk finished");
+			textPane.append("dig apk finished" + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -249,20 +219,23 @@ public class Main extends JFrame implements ActionListener {
 		}
 	}
 
-	private static void buildApk(String path) {
+	private void buildApk(String path) {
 		ProcessBuilder ps = new ProcessBuilder("./apktool", "b", path);
 		ps.redirectErrorStream(true);
 		Process pr;
 		try {
 			pr = ps.start();
-			BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					pr.getInputStream()));
 			String line;
 			while ((line = in.readLine()) != null) {
-				System.out.println(line);
+				//System.out.println(line);
+				textPane.append(line + "\n");
 			}
 			pr.waitFor();
 			in.close();
-			System.out.println("build apk finished");
+			//System.out.println("build apk finished");
+			textPane.append("build apk finished" + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -272,7 +245,8 @@ public class Main extends JFrame implements ActionListener {
 
 	private static void addPermissions(Document document) {
 		List<String> permissionList = new ArrayList<String>();
-		NodeList usePermission = rootElement.getElementsByTagName("uses-permission");
+		NodeList usePermission = rootElement
+				.getElementsByTagName("uses-permission");
 		for (int i = 0; i < usePermission.getLength(); i++) {
 			Node permissionNode = usePermission.item(i);
 			NamedNodeMap attr = permissionNode.getAttributes();
@@ -280,10 +254,12 @@ public class Main extends JFrame implements ActionListener {
 			permissionList.add(nodeAttr.getNodeValue());
 		}
 		if (!permissionList.contains("android.permission.INTERNET")) {
-			rootElement.appendChild(getPermissionNode(document, "android.permission.INTERNET"));
+			rootElement.appendChild(getPermissionNode(document,
+					"android.permission.INTERNET"));
 		}
 		if (!permissionList.contains("android.permission.ACCESS_NETWORK_STATE")) {
-			rootElement.appendChild(getPermissionNode(document, "android.permission.ACCESS_NETWORK_STATE"));
+			rootElement.appendChild(getPermissionNode(document,
+					"android.permission.ACCESS_NETWORK_STATE"));
 		}
 	}
 
@@ -293,21 +269,23 @@ public class Main extends JFrame implements ActionListener {
 		return element;
 	}
 
-	private static void replaceMainActivity(Document document) {
+	private void replaceMainActivity(Document document) {
 		boolean hasAdsActivity = false;
 		boolean hasGPSMedaData = false;
 		NodeList activity = rootElement.getElementsByTagName("activity");
 		NodeList metaData = rootElement.getElementsByTagName("meta-data");
 		for (int k = 0; k < metaData.getLength(); k++) {
 			Node metaDataNode = metaData.item(k);
-			if (metaDataNode.getAttributes().getNamedItem("android:name").equals("com.google.android.gms.version")) {
+			if (metaDataNode.getAttributes().getNamedItem("android:name")
+					.equals("com.google.android.gms.version")) {
 				hasGPSMedaData = true;
 				break;
 			}
 		}
 		for (int i = 0; i < activity.getLength(); i++) {
 			Node activityNode = activity.item(i);
-			if (activityNode.getAttributes().getNamedItem("android:name").equals("com.google.android.gms.ads.AdActivity")) {
+			if (activityNode.getAttributes().getNamedItem("android:name")
+					.equals("com.google.android.gms.ads.AdActivity")) {
 				hasAdsActivity = true;
 				break;
 			}
@@ -318,18 +296,26 @@ public class Main extends JFrame implements ActionListener {
 			for (int j = 0; j < intentFilter.getLength(); j++) {
 				if (intentFilter.item(j).getNodeName().equals("intent-filter")) {
 					Node action = intentFilter.item(j).getChildNodes().item(1);
-					Node category = intentFilter.item(j).getChildNodes().item(3);
+					Node category = intentFilter.item(j).getChildNodes()
+							.item(3);
 					if (action == null || category == null) {
 						continue;
 					}
 					if (action.getNodeName().equals("action")) {
 						NamedNodeMap attr = action.getAttributes();
 						Node androidName = attr.getNamedItem("android:name");
-						Node androidCategory = category.getAttributes().getNamedItem("android:name");
-						if (androidName.getNodeValue().equals("android.intent.action.MAIN") && androidCategory.getNodeValue().equals("android.intent.category.LAUNCHER")) {
+						Node androidCategory = category.getAttributes()
+								.getNamedItem("android:name");
+						if (androidName.getNodeValue().equals(
+								"android.intent.action.MAIN")
+								&& androidCategory.getNodeValue().equals(
+										"android.intent.category.LAUNCHER")) {
 							oldMainActivityNode = activityNode.cloneNode(true);
-							mainClassName = oldMainActivityNode.getAttributes().getNamedItem("android:name").getNodeValue();
-							activityNode.getParentNode().removeChild(activityNode);
+							mainClassName = oldMainActivityNode.getAttributes()
+									.getNamedItem("android:name")
+									.getNodeValue();
+							activityNode.getParentNode().removeChild(
+									activityNode);
 							break;
 						}
 					}
@@ -346,24 +332,29 @@ public class Main extends JFrame implements ActionListener {
 		if (!hasGPSMedaData) {
 			application.appendChild(getMetaDataNode(document));
 		}
-		int dotCount = mainClassName.length() - mainClassName.replace(".", "").length();
-		System.out.println(dotCount);
+		int dotCount = mainClassName.length()
+				- mainClassName.replace(".", "").length();
+		//System.out.println(dotCount);
+		textPane.append(dotCount + "\n");
 		if (dotCount <= 1) {
 			mainClassName = packageName + mainClassName;
 		}
-		System.out.println(mainClassName);
+		//System.out.println(mainClassName);
+		textPane.append(mainClassName + "\n");
 	}
 
 	private static Node getMainActivityNode(Document document) {
 		Element element = document.createElement("activity");
 		element.setAttribute("android:name", "com.admobvn.inject.AdmobInject");
-		element.setAttribute("android:configChanges", "orientation|screenSize|keyboardHidden");
+		element.setAttribute("android:configChanges",
+				"orientation|screenSize|keyboardHidden");
 
 		Element intentFilter = document.createElement("intent-filter");
 		Element action = document.createElement("action");
 		action.setAttribute("android:name", "android.intent.action.MAIN");
 		Element category = document.createElement("category");
-		category.setAttribute("android:name", "android.intent.category.LAUNCHER");
+		category.setAttribute("android:name",
+				"android.intent.category.LAUNCHER");
 		intentFilter.appendChild(action);
 		intentFilter.appendChild(category);
 		element.appendChild(intentFilter);
@@ -372,9 +363,13 @@ public class Main extends JFrame implements ActionListener {
 
 	private static Node getAdsActivityNode(Document document) {
 		Element element = document.createElement("activity");
-		element.setAttribute("android:name", "com.google.android.gms.ads.AdActivity");
-		element.setAttribute("android:configChanges", "keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize");
-		element.setAttribute("android:theme", "@android:style/Theme.Translucent");
+		element.setAttribute("android:name",
+				"com.google.android.gms.ads.AdActivity");
+		element.setAttribute(
+				"android:configChanges",
+				"keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize");
+		element.setAttribute("android:theme",
+				"@android:style/Theme.Translucent");
 		return element;
 	}
 
@@ -386,12 +381,14 @@ public class Main extends JFrame implements ActionListener {
 	}
 
 	private static void writeToFile(Document document) {
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		TransformerFactory transformerFactory = TransformerFactory
+				.newInstance();
 		Transformer transformer;
 		try {
 			transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(document);
-			StreamResult result = new StreamResult(new File(projectName + "/AndroidManifest.xml"));
+			StreamResult result = new StreamResult(new File(projectName
+					+ "/AndroidManifest.xml"));
 			transformer.transform(source, result);
 		} catch (TransformerConfigurationException e) {
 			e.printStackTrace();
@@ -405,7 +402,8 @@ public class Main extends JFrame implements ActionListener {
 		boolean doDiscardNl = false;
 		String content = null;
 		try {
-			File file = new File(projectName + "/smali/com/admobvn/inject/AdmobInject.smali");
+			File file = new File(projectName
+					+ "/smali/com/admobvn/inject/AdmobInject.smali");
 			FileReader fr = new FileReader(file);
 			BufferedReader br = new BufferedReader(fr);
 			int i;
@@ -444,7 +442,8 @@ public class Main extends JFrame implements ActionListener {
 		FileInputStream fin = null;
 		try {
 			fin = new FileInputStream(file);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					fin));
 			StringBuilder sb = new StringBuilder();
 			String line = null;
 			while ((line = reader.readLine()) != null) {
@@ -524,23 +523,29 @@ public class Main extends JFrame implements ActionListener {
 		}
 	}
 
-	private static void signApk(String path) {
-		ProcessBuilder ps = new ProcessBuilder("chmod", "a+x", "apk-resigner.sh");
+	private void signApk(String path) {
+		ProcessBuilder ps = new ProcessBuilder("chmod", "a+x",
+				"apk-resigner.sh");
 		ps.redirectErrorStream(true);
 		Process pr;
 		try {
 			pr = ps.start();
 			pr.waitFor();
-			ps = new ProcessBuilder("./apk-resigner.sh", path, "../../../Dropbox/keystores/miniApp.keystore", "123465@appota", "appota");
+			ps = new ProcessBuilder("./apk-resigner.sh", path,
+					keystorePath,
+					keystorePass, keystoreAlias);
 			pr = ps.start();
-			BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					pr.getInputStream()));
 			String line;
 			while ((line = in.readLine()) != null) {
-				System.out.println(line);
+				//System.out.println(line);
+				textPane.append(line + "\n");
 			}
 			pr.waitFor();
 			in.close();
-			System.out.println("sign apk finished");
+			//System.out.println("sign apk finished");
+			textPane.append("sign apk finished" + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -552,32 +557,88 @@ public class Main extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if (e.getSource() == btnBrowseAPK) {
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			int returnVal = fc.showOpenDialog(Main.this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
 				// This is where a real application would open the file.
 				txtEdtapkfile.setText(file.getPath());
+				inputAPKPath = file.getAbsolutePath();
 			} else {
 				System.err.println("canceled");
 			}
-		} else if(e.getSource() == btnBrowseKeystore){
+		} else if (e.getSource() == btnBrowseKeystore) {
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			int returnVal = fc.showOpenDialog(Main.this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
 				// This is where a real application would open the file.
 				txtChooseKeystore.setText(file.getPath());
+				keystorePath = file.getAbsolutePath();
 			} else {
 				System.err.println("canceled");
 			}
-		} else if(e.getSource() == btnChoose){
+		} else if (e.getSource() == btnChoose) {
+			fc.setDialogTitle("Select output destination for signed apk");
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnVal = fc.showOpenDialog(Main.this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
 				// This is where a real application would open the file.
 				txtOutputFile.setText(file.getPath());
+				outputApkPath = file.getPath();
 			} else {
 				System.err.println("canceled");
 			}
+		} else if (e.getSource() == btnRock) {
+			rock();
 		}
+	}
+
+	private void rock() {
+		digApkFile(inputAPKPath);
+		try {
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentBuilderFactory
+					.newDocumentBuilder();
+			projectName = inputAPKPath.substring(0, inputAPKPath.length() - 4);
+			Document document = documentBuilder.parse(projectName
+					+ "/AndroidManifest.xml");
+			rootElement = document.getDocumentElement();
+			application = rootElement.getElementsByTagName("application").item(
+					0);
+			packageName = rootElement.getAttributes().getNamedItem("package")
+					.getNodeValue();
+			//System.out.println(packageName);
+			textPane.append(packageName + "\n");
+			// mainClassName = getMainClassName(document);
+			replaceMainActivity(document);
+			addPermissions(document);
+			writeToFile(document);
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		File srcFolder = new File("com");
+		File destFolder = new File(projectName + "/smali/com");
+
+		// make sure source exists
+		if (!srcFolder.exists()) {
+			//System.out.println("Directory does not exist.");
+			textPane.append("Directory does not exist" + "\n");
+		} else {
+			try {
+				copyFolder(srcFolder, destFolder);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		replaceMainActivitySmali();
+		buildApk(projectName);
+		signApk(projectName + "/dist/" + projectName + ".apk");
 	}
 }
