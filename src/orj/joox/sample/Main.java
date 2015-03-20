@@ -19,10 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -36,7 +37,104 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class Main extends JFrame implements ActionListener{
+public class Main extends JFrame implements ActionListener {
+
+	private JButton btnBrowseAPK;
+	private JButton btnBrowseKeystore;
+	private JButton btnChoose;
+	private JFileChooser fc;
+
+	public Main() {
+		fc = new JFileChooser();
+		getContentPane().setLayout(null);
+
+		JLabel lblChooseApkFile = new JLabel("Choose APK File");
+		lblChooseApkFile.setBounds(6, 2, 183, 39);
+		getContentPane().add(lblChooseApkFile);
+		txtEdtapkfile = new JTextField();
+		txtEdtapkfile.setBounds(183, 2, 237, 39);
+		getContentPane().add(txtEdtapkfile);
+		txtEdtapkfile.setColumns(10);
+
+		btnBrowseAPK = new JButton("Browse...");
+		btnBrowseAPK.setBounds(432, 3, 147, 39);
+		btnBrowseAPK.addActionListener(this);
+		getContentPane().add(btnBrowseAPK);
+
+		JLabel lblChooseKeystore = new JLabel("Choose keystore");
+		lblChooseKeystore.setBounds(6, 41, 183, 39);
+		getContentPane().add(lblChooseKeystore);
+
+		txtChooseKeystore = new JTextField();
+		txtChooseKeystore.setBounds(183, 41, 237, 39);
+		getContentPane().add(txtChooseKeystore);
+		txtChooseKeystore.setColumns(10);
+
+		btnBrowseKeystore = new JButton("Browse...");
+		btnBrowseKeystore.setBounds(432, 42, 147, 39);
+		btnBrowseKeystore.addActionListener(this);
+		getContentPane().add(btnBrowseKeystore);
+
+		JLabel lblKeystorePass = new JLabel("Keystore Pass");
+		lblKeystorePass.setBounds(6, 80, 183, 39);
+		getContentPane().add(lblKeystorePass);
+
+		txtKeystorePass = new JTextField();
+		txtKeystorePass.setBounds(183, 80, 237, 39);
+		getContentPane().add(txtKeystorePass);
+		txtKeystorePass.setColumns(10);
+
+		label = new JLabel("");
+		label.setBounds(366, 80, 183, 39);
+		getContentPane().add(label);
+
+		JLabel lblKeystoreAlias = new JLabel("Keystore Alias");
+		lblKeystoreAlias.setBounds(6, 119, 183, 39);
+		getContentPane().add(lblKeystoreAlias);
+
+		txtKeystoreAlias = new JTextField();
+		txtKeystoreAlias.setBounds(183, 119, 237, 39);
+		getContentPane().add(txtKeystoreAlias);
+		txtKeystoreAlias.setColumns(10);
+
+		label_1 = new JLabel("");
+		label_1.setBounds(366, 119, 183, 39);
+		getContentPane().add(label_1);
+
+		JLabel lblOutputFile = new JLabel("Output file");
+		lblOutputFile.setBounds(6, 158, 183, 39);
+		getContentPane().add(lblOutputFile);
+
+		txtOutputFile = new JTextField();
+		txtOutputFile.setBounds(183, 158, 237, 39);
+		getContentPane().add(txtOutputFile);
+		txtOutputFile.setColumns(10);
+
+		btnChoose = new JButton("Choose...");
+		btnChoose.setBounds(432, 159, 147, 39);
+		btnChoose.addActionListener(this);
+		getContentPane().add(btnChoose);
+
+		label_2 = new JLabel("");
+		label_2.setBounds(0, 197, 183, 39);
+		getContentPane().add(label_2);
+
+		btnRock = new JButton("Rock!");
+		btnRock.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		btnRock.setBounds(183, 251, 183, 39);
+		getContentPane().add(btnRock);
+
+		label_3 = new JLabel("");
+		label_3.setBounds(366, 197, 183, 39);
+		getContentPane().add(label_3);
+
+		textPane = new JTextPane();
+		textPane.setBounds(10, 302, 569, 207);
+		getContentPane().add(textPane);
+	}
 
 	private static String mainClassName;
 	private static Node application;
@@ -44,77 +142,67 @@ public class Main extends JFrame implements ActionListener{
 	private static Node oldMainActivityNode;
 	private static String packageName;
 	private static String projectName = "VivaVideoPro";
-	
-	private JPanel jPanel;
-	private JFileChooser fc;
-	private JButton btnAPK;
-	
-	public Main(){
-		jPanel = new JPanel();
-		fc = new JFileChooser();
-		JEditorPane inputAPK = new JEditorPane();
-		btnAPK = new JButton("APK File");
-		btnAPK.addActionListener(this);
-		
-		JEditorPane inputKeystore = new JEditorPane();
-		JButton btnKeystore = new JButton("Keystore file");
-		
-		JEditorPane inputKeyPass = new JEditorPane();
-		JEditorPane inputKeyAlias = new JEditorPane();
-		
-		jPanel.add(inputAPK);
-		jPanel.add(btnAPK);
-		jPanel.add(inputKeystore);
-		jPanel.add(btnKeystore);
-		jPanel.add(inputKeyPass);
-		jPanel.add(inputKeyAlias);
-		this.add(jPanel);
-	}
+
+	private JTextField txtEdtapkfile;
+	private JTextField txtChooseKeystore;
+	private JTextField txtKeystorePass;
+	private JTextField txtKeystoreAlias;
+	private JTextField txtOutputFile;
+	private JButton btnRock;
+	private JLabel label;
+	private JLabel label_1;
+	private JLabel label_2;
+	private JLabel label_3;
+	private JTextPane textPane;
 
 	public static void main(String[] args) {
 		Main main = new Main();
-		main.setTitle("Admob Injector");
-		main.setSize(300, 300);
+		main.setSize(586, 537);
 		main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		main.setVisible(true);
-//		digApkFile(projectName + ".apk");
-//		try {
-//			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-//			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-//			Document document = documentBuilder.parse(projectName + "/AndroidManifest.xml");
-//			rootElement = document.getDocumentElement();
-//			application = rootElement.getElementsByTagName("application").item(0);
-//			packageName = rootElement.getAttributes().getNamedItem("package").getNodeValue();
-//			System.out.println(packageName);
-//			// mainClassName = getMainClassName(document);
-//			replaceMainActivity(document);
-//			addPermissions(document);
-//			writeToFile(document);
-//		} catch (SAXException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} catch (ParserConfigurationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		File srcFolder = new File("com");
-//		File destFolder = new File(projectName + "/smali/com");
-//
-//		// make sure source exists
-//		if (!srcFolder.exists()) {
-//			System.out.println("Directory does not exist.");
-//			System.exit(0);
-//		} else {
-//			try {
-//				copyFolder(srcFolder, destFolder);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		replaceMainActivitySmali();
-//		buildApk(projectName);
-//		signApk(projectName + "/dist/" + projectName + ".apk");
+		// digApkFile(projectName + ".apk");
+		// try {
+		// DocumentBuilderFactory documentBuilderFactory =
+		// DocumentBuilderFactory.newInstance();
+		// DocumentBuilder documentBuilder =
+		// documentBuilderFactory.newDocumentBuilder();
+		// Document document = documentBuilder.parse(projectName +
+		// "/AndroidManifest.xml");
+		// rootElement = document.getDocumentElement();
+		// application =
+		// rootElement.getElementsByTagName("application").item(0);
+		// packageName =
+		// rootElement.getAttributes().getNamedItem("package").getNodeValue();
+		// System.out.println(packageName);
+		// // mainClassName = getMainClassName(document);
+		// replaceMainActivity(document);
+		// addPermissions(document);
+		// writeToFile(document);
+		// } catch (SAXException e) {
+		// e.printStackTrace();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// } catch (ParserConfigurationException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// File srcFolder = new File("com");
+		// File destFolder = new File(projectName + "/smali/com");
+		//
+		// // make sure source exists
+		// if (!srcFolder.exists()) {
+		// System.out.println("Directory does not exist.");
+		// System.exit(0);
+		// } else {
+		// try {
+		// copyFolder(srcFolder, destFolder);
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// replaceMainActivitySmali();
+		// buildApk(projectName);
+		// signApk(projectName + "/dist/" + projectName + ".apk");
 	}
 
 	// private static void unzipApk(String path) {
@@ -463,15 +551,33 @@ public class Main extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		if (e.getSource() == btnAPK) {
+		if (e.getSource() == btnBrowseAPK) {
 			int returnVal = fc.showOpenDialog(Main.this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = fc.getSelectedFile();
-                //This is where a real application would open the file.
-                System.out.println(file.getPath());
-            } else {
-                System.err.println("canceled");
-            }
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				// This is where a real application would open the file.
+				txtEdtapkfile.setText(file.getPath());
+			} else {
+				System.err.println("canceled");
+			}
+		} else if(e.getSource() == btnBrowseKeystore){
+			int returnVal = fc.showOpenDialog(Main.this);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				// This is where a real application would open the file.
+				txtChooseKeystore.setText(file.getPath());
+			} else {
+				System.err.println("canceled");
+			}
+		} else if(e.getSource() == btnChoose){
+			int returnVal = fc.showOpenDialog(Main.this);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				// This is where a real application would open the file.
+				txtOutputFile.setText(file.getPath());
+			} else {
+				System.err.println("canceled");
+			}
 		}
 	}
 }
