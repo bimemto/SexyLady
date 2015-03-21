@@ -1,11 +1,12 @@
 #!/bin/bash
 # Sample usage is as follows;
-# ./signapk myapp.apk debug.keystore android androiddebugkey
+# ./signapk myapp.apk debug.keystore android androiddebugkey signed_apk.apk
 # 
 # param1, APK file: Calculator_debug.apk
 # param2, keystore location: ~/.android/debug.keystore
 # param3, key storepass: android
 # param4, key alias: androiddebugkey
+# param5, output file
 
 USER_HOME=$(eval echo ~${SUDO_USER})
 
@@ -14,17 +15,20 @@ APK=$1
 KEYSTORE="${2:-$USER_HOME/.android/debug.keystore}"
 STOREPASS="${3:-android}"
 ALIAS="${4:-androiddebugkey}"
+OUTPUT=$5
 
 
 # get the filename
 APK_BASENAME=$(basename $APK)
-SIGNED_APK="signed_"$APK_BASENAME
+SIGNED_APK= $OUTPUT"/signed_"$APK_BASENAME
 
 #debug
 echo param1 $APK
 echo param2 $KEYSTORE
 echo param3 $STOREPASS
 echo param4 $ALIAS
+echo param5 $OUTPUT
+echo signedApk $SIGNED_APK
 
 # delete META-INF folder
 zip -d $APK META-INF/\*
