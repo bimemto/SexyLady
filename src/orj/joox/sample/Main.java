@@ -22,10 +22,12 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.DefaultCaret;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,9 +47,14 @@ import org.xml.sax.SAXException;
 
 public class Main extends JFrame implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JButton btnBrowseAPK;
 	private JButton btnBrowseKeystore;
 	private JButton btnChoose;
+	private JButton btnChooseSmali;
 	private JFileChooser fc;
 	private String inputAPKPath, keystorePath, keystorePass, keystoreAlias, outputApkPath;
 	private JTextArea textPane;
@@ -55,7 +62,7 @@ public class Main extends JFrame implements ActionListener {
 	public Main() {
 		fc = new JFileChooser();
 		getContentPane().setLayout(null);
-
+		setTitle("Admob Injector");
 		JLabel lblChooseApkFile = new JLabel("Choose APK File");
 		lblChooseApkFile.setBounds(6, 2, 183, 39);
 		getContentPane().add(lblChooseApkFile);
@@ -129,6 +136,20 @@ public class Main extends JFrame implements ActionListener {
 		label_2.setBounds(0, 197, 183, 39);
 		getContentPane().add(label_2);
 
+		JLabel lblSmali = new JLabel("Smali location");
+		lblSmali.setBounds(6, 200, 183, 39);
+		getContentPane().add(lblSmali);
+
+		txtSmaliLocation = new JTextField();
+		txtSmaliLocation.setBounds(183, 200, 237, 39);
+		txtSmaliLocation.setColumns(10);
+		getContentPane().add(txtSmaliLocation);
+
+		btnChooseSmali = new JButton("Browse...");
+		btnChooseSmali.setBounds(432, 200, 147, 39);
+		btnChooseSmali.addActionListener(this);
+		getContentPane().add(btnChooseSmali);
+
 		btnRock = new JButton("Rock!");
 		btnRock.addActionListener(this);
 		btnRock.setBounds(183, 251, 183, 39);
@@ -141,6 +162,8 @@ public class Main extends JFrame implements ActionListener {
 
 		textPane = new JTextArea();
 		textPane.setBounds(10, 302, 569, 207);
+		DefaultCaret caret = (DefaultCaret) textPane.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		JScrollPane scrollPane = new JScrollPane(textPane);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setBounds(10, 302, 569, 207);
@@ -153,13 +176,14 @@ public class Main extends JFrame implements ActionListener {
 	private static Element rootElement;
 	private static Node oldMainActivityNode;
 	private static String packageName;
-	private static String projectName;
+	private static String projectPath;
 	private static String afterBuildApkName;
 
 	private JTextField txtEdtapkfile;
 	private JTextField txtChooseKeystore;
 	private JTextField txtKeystorePass;
 	private JTextField txtKeystoreAlias;
+	private JTextField txtSmaliLocation;
 	private JTextField txtOutputFile;
 	private JButton btnRock;
 	private JLabel label;
@@ -201,7 +225,7 @@ public class Main extends JFrame implements ActionListener {
 			ps = new ProcessBuilder("./apktool", "if", filePath);
 			pr = ps.start();
 			pr.waitFor();
-			ps = new ProcessBuilder("./apktool", "d", filePath, "-o", projectName);
+			ps = new ProcessBuilder("./apktool", "d", filePath, "-o", projectPath);
 			pr = ps.start();
 			BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
 			String line;
@@ -366,7 +390,7 @@ public class Main extends JFrame implements ActionListener {
 		try {
 			transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(document);
-			StreamResult result = new StreamResult(new File(projectName + "/AndroidManifest.xml"));
+			StreamResult result = new StreamResult(new File(projectPath + "/AndroidManifest.xml"));
 			transformer.transform(source, result);
 		} catch (TransformerConfigurationException e) {
 			e.printStackTrace();
@@ -380,7 +404,7 @@ public class Main extends JFrame implements ActionListener {
 		boolean doDiscardNl = false;
 		String content = null;
 		try {
-			File file = new File(projectName + "/smali/com/admobvn/inject/AdmobInject.smali");
+			File file = new File(projectPath + "/smali/com/admobvn/inject/AdmobInject.smali");
 			FileReader fr = new FileReader(file);
 			BufferedReader br = new BufferedReader(fr);
 			int i;
@@ -415,30 +439,30 @@ public class Main extends JFrame implements ActionListener {
 		}
 	}
 
-	private static String readFile(String file) {
-		FileInputStream fin = null;
-		try {
-			fin = new FileInputStream(file);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
-			StringBuilder sb = new StringBuilder();
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-			}
-			return sb.toString();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				fin.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
+	// private static String readFile(String file) {
+	// FileInputStream fin = null;
+	// try {
+	// fin = new FileInputStream(file);
+	// BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+	// StringBuilder sb = new StringBuilder();
+	// String line = null;
+	// while ((line = reader.readLine()) != null) {
+	// sb.append(line);
+	// }
+	// return sb.toString();
+	// } catch (FileNotFoundException e) {
+	// e.printStackTrace();
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// } finally {
+	// try {
+	// fin.close();
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// return null;
+	// }
 
 	public static void copyFolder(File src, File dest) throws IOException {
 
@@ -561,7 +585,16 @@ public class Main extends JFrame implements ActionListener {
 				File file = fileChoose.getSelectedFile();
 				txtOutputFile.setText(file.getPath());
 				outputApkPath = file.getPath();
-				textPane.append(outputApkPath + "\n"); 
+				textPane.append(outputApkPath + "\n");
+			}
+		} else if (e.getSource() == btnChooseSmali) {
+			JFileChooser fileChoose = new JFileChooser();
+			fileChoose.setDialogTitle("Select smali location");
+			fileChoose.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int returnVal = fileChoose.showOpenDialog(Main.this);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fileChoose.getSelectedFile();
+				txtSmaliLocation.setText(file.getPath());
 			}
 		} else if (e.getSource() == btnRock) {
 			new Thread(new Runnable() {
@@ -575,14 +608,14 @@ public class Main extends JFrame implements ActionListener {
 	}
 
 	private void rock() {
-		projectName = inputAPKPath.substring(0, inputAPKPath.length() - 4);
+		textPane.setText("");
+		projectPath = inputAPKPath.substring(0, inputAPKPath.length() - 4);
 		afterBuildApkName = inputAPKPath.substring(inputAPKPath.lastIndexOf("/"), inputAPKPath.length());
-		System.out.println(projectName);
 		digApkFile(inputAPKPath);
 		try {
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			Document document = documentBuilder.parse(projectName + "/AndroidManifest.xml");
+			Document document = documentBuilder.parse(projectPath + "/AndroidManifest.xml");
 			rootElement = document.getDocumentElement();
 			application = rootElement.getElementsByTagName("application").item(0);
 			packageName = rootElement.getAttributes().getNamedItem("package").getNodeValue();
@@ -600,8 +633,8 @@ public class Main extends JFrame implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		File srcFolder = new File("com");
-		File destFolder = new File(projectName + "/smali/com");
+		File srcFolder = new File(txtSmaliLocation.getText());
+		File destFolder = new File(projectPath + "/smali/com");
 
 		// make sure source exists
 		if (!srcFolder.exists()) {
@@ -615,7 +648,34 @@ public class Main extends JFrame implements ActionListener {
 			}
 		}
 		replaceMainActivitySmali();
-		buildApk(projectName);
-		signApk(projectName + "/dist" + afterBuildApkName);
+		buildApk(projectPath);
+		signApk(projectPath + "/dist" + afterBuildApkName);
+		deleteDirectory(new File(projectPath));
+		deleteApk(new File(inputAPKPath));
+		JOptionPane.showMessageDialog(null, "Inject finished");
+	}
+
+	private boolean deleteDirectory(File directory) {
+		if (directory.exists()) {
+			File[] files = directory.listFiles();
+			if (null != files) {
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].isDirectory()) {
+						deleteDirectory(files[i]);
+					} else {
+						files[i].delete();
+					}
+				}
+			}
+		}
+		return (directory.delete());
+	}
+	
+	private boolean deleteApk(File apk){
+		if(apk.exists()){
+			return apk.delete();
+		} else {
+			return false;
+		}
 	}
 }
