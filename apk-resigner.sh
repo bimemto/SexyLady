@@ -20,7 +20,7 @@ OUTPUT=$5
 
 # get the filename
 APK_BASENAME=$(basename $APK)
-SIGNED_APK= $OUTPUT"/signed_"$APK_BASENAME
+SIGNED_APK=$OUTPUT"/signed_"$APK_BASENAME
 
 #debug
 echo param1 $APK
