@@ -12,6 +12,10 @@
 
 
 # instance fields
+.field private adId:Ljava/lang/String;
+
+.field private adView:Lcom/google/android/gms/ads/AdView;
+
 .field private className:Ljava/lang/String;
 
 .field private interstitial:Lcom/google/android/gms/ads/InterstitialAd;
@@ -26,17 +30,17 @@
     .locals 1
 
     .prologue
-    .line 20
+    .line 22
     const/4 v0, 0x1
 
     sput v0, Lcom/admobvn/inject/AdmobInject;->TYPE_WIFI:I
 
-    .line 21
+    .line 23
     const/4 v0, 0x2
 
     sput v0, Lcom/admobvn/inject/AdmobInject;->TYPE_MOBILE:I
 
-    .line 22
+    .line 24
     const/4 v0, 0x0
 
     sput v0, Lcom/admobvn/inject/AdmobInject;->TYPE_NOT_CONNECTED:I
@@ -48,20 +52,25 @@
     .locals 1
 
     .prologue
-    .line 14
+    .line 16
     invoke-direct {p0}, Landroid/app/Activity;-><init>()V
 
-    .line 16
+    .line 18
     const-string v0, "clazzName"
 
     iput-object v0, p0, Lcom/admobvn/inject/AdmobInject;->className:Ljava/lang/String;
 
-    .line 19
+    .line 21
     const/4 v0, 0x0
 
     iput-boolean v0, p0, Lcom/admobvn/inject/AdmobInject;->isAdDisplayed:Z
 
-    .line 14
+    .line 26
+    const-string v0, "ca-app-pub-4088717889688649/3868490819"
+
+    iput-object v0, p0, Lcom/admobvn/inject/AdmobInject;->adId:Ljava/lang/String;
+
+    .line 16
     return-void
 .end method
 
@@ -69,7 +78,7 @@
     .locals 0
 
     .prologue
-    .line 52
+    .line 60
     invoke-direct {p0}, Lcom/admobvn/inject/AdmobInject;->displayAd()V
 
     return-void
@@ -79,7 +88,7 @@
     .locals 1
 
     .prologue
-    .line 54
+    .line 62
     iget-object v0, p0, Lcom/admobvn/inject/AdmobInject;->interstitial:Lcom/google/android/gms/ads/InterstitialAd;
 
     if-eqz v0, :cond_0
@@ -92,21 +101,21 @@
 
     if-eqz v0, :cond_0
 
-    .line 55
+    .line 63
     iget-object v0, p0, Lcom/admobvn/inject/AdmobInject;->interstitial:Lcom/google/android/gms/ads/InterstitialAd;
 
     invoke-virtual {v0}, Lcom/google/android/gms/ads/InterstitialAd;->show()V
 
-    .line 56
+    .line 64
     const/4 v0, 0x1
 
     iput-boolean v0, p0, Lcom/admobvn/inject/AdmobInject;->isAdDisplayed:Z
 
-    .line 60
+    .line 68
     :goto_0
     return-void
 
-    .line 58
+    .line 66
     :cond_0
     invoke-direct {p0}, Lcom/admobvn/inject/AdmobInject;->startGame()V
 
@@ -118,7 +127,7 @@
     .param p0, "context"    # Landroid/content/Context;
 
     .prologue
-    .line 107
+    .line 116
     const-string v2, "connectivity"
 
     invoke-virtual {p0, v2}, Landroid/content/Context;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
@@ -127,17 +136,17 @@
 
     check-cast v1, Landroid/net/ConnectivityManager;
 
-    .line 108
+    .line 117
     .local v1, "cm":Landroid/net/ConnectivityManager;
     invoke-virtual {v1}, Landroid/net/ConnectivityManager;->getActiveNetworkInfo()Landroid/net/NetworkInfo;
 
     move-result-object v0
 
-    .line 109
+    .line 118
     .local v0, "activeNetwork":Landroid/net/NetworkInfo;
     if-eqz v0, :cond_1
 
-    .line 110
+    .line 119
     invoke-virtual {v0}, Landroid/net/NetworkInfo;->getType()I
 
     move-result v2
@@ -146,14 +155,14 @@
 
     if-ne v2, v3, :cond_0
 
-    .line 111
+    .line 120
     sget v2, Lcom/admobvn/inject/AdmobInject;->TYPE_WIFI:I
 
-    .line 116
+    .line 125
     :goto_0
     return v2
 
-    .line 113
+    .line 122
     :cond_0
     invoke-virtual {v0}, Landroid/net/NetworkInfo;->getType()I
 
@@ -161,12 +170,12 @@
 
     if-nez v2, :cond_1
 
-    .line 114
+    .line 123
     sget v2, Lcom/admobvn/inject/AdmobInject;->TYPE_MOBILE:I
 
     goto :goto_0
 
-    .line 116
+    .line 125
     :cond_1
     sget v2, Lcom/admobvn/inject/AdmobInject;->TYPE_NOT_CONNECTED:I
 
@@ -177,21 +186,21 @@
     .locals 3
 
     .prologue
-    .line 63
+    .line 71
     new-instance v1, Lcom/google/android/gms/ads/InterstitialAd;
 
     invoke-direct {v1, p0}, Lcom/google/android/gms/ads/InterstitialAd;-><init>(Landroid/content/Context;)V
 
     iput-object v1, p0, Lcom/admobvn/inject/AdmobInject;->interstitial:Lcom/google/android/gms/ads/InterstitialAd;
 
-    .line 64
+    .line 72
     iget-object v1, p0, Lcom/admobvn/inject/AdmobInject;->interstitial:Lcom/google/android/gms/ads/InterstitialAd;
 
-    const-string v2, "ca-app-pub-4088717889688649/6821957211"
+    iget-object v2, p0, Lcom/admobvn/inject/AdmobInject;->adId:Ljava/lang/String;
 
     invoke-virtual {v1, v2}, Lcom/google/android/gms/ads/InterstitialAd;->setAdUnitId(Ljava/lang/String;)V
 
-    .line 65
+    .line 73
     new-instance v1, Lcom/google/android/gms/ads/AdRequest$Builder;
 
     invoke-direct {v1}, Lcom/google/android/gms/ads/AdRequest$Builder;-><init>()V
@@ -200,13 +209,13 @@
 
     move-result-object v0
 
-    .line 66
+    .line 75
     .local v0, "adRequest":Lcom/google/android/gms/ads/AdRequest;
-    iget-object v1, p0, Lcom/admobvn/inject/AdmobInject;->interstitial:Lcom/google/android/gms/ads/InterstitialAd;
+    iget-object v1, p0, Lcom/admobvn/inject/AdmobInject;->adView:Lcom/google/android/gms/ads/AdView;
 
-    invoke-virtual {v1, v0}, Lcom/google/android/gms/ads/InterstitialAd;->loadAd(Lcom/google/android/gms/ads/AdRequest;)V
+    invoke-virtual {v1, v0}, Lcom/google/android/gms/ads/AdView;->loadAd(Lcom/google/android/gms/ads/AdRequest;)V
 
-    .line 67
+    .line 76
     return-void
 .end method
 
@@ -214,7 +223,7 @@
     .locals 6
 
     .prologue
-    .line 72
+    .line 81
     new-instance v0, Lcom/admobvn/inject/AdmobInject$1;
 
     const-wide/16 v2, 0xfa0
@@ -227,12 +236,12 @@
 
     iput-object v0, p0, Lcom/admobvn/inject/AdmobInject;->mCountDownTimer:Landroid/os/CountDownTimer;
 
-    .line 83
+    .line 92
     iget-object v0, p0, Lcom/admobvn/inject/AdmobInject;->mCountDownTimer:Landroid/os/CountDownTimer;
 
     invoke-virtual {v0}, Landroid/os/CountDownTimer;->start()Landroid/os/CountDownTimer;
 
-    .line 84
+    .line 93
     return-void
 .end method
 
@@ -241,12 +250,12 @@
     .param p0, "context"    # Landroid/content/Context;
 
     .prologue
-    .line 120
+    .line 129
     invoke-static {p0}, Lcom/admobvn/inject/AdmobInject;->getConnectivityStatus(Landroid/content/Context;)I
 
     move-result v0
 
-    .line 121
+    .line 130
     .local v0, "status":I
     sget v1, Lcom/admobvn/inject/AdmobInject;->TYPE_NOT_CONNECTED:I
 
@@ -267,42 +276,42 @@
     .locals 3
 
     .prologue
-    .line 87
+    .line 96
     invoke-static {p0}, Lcom/admobvn/inject/AdmobInject;->isNetworkAvailable(Landroid/content/Context;)Z
 
     move-result v2
 
     if-nez v2, :cond_0
 
-    .line 88
+    .line 97
     new-instance v1, Landroid/content/Intent;
 
     invoke-direct {v1}, Landroid/content/Intent;-><init>()V
 
-    .line 89
+    .line 98
     .local v1, "intent":Landroid/content/Intent;
     iget-object v2, p0, Lcom/admobvn/inject/AdmobInject;->className:Ljava/lang/String;
 
     invoke-virtual {v1, p0, v2}, Landroid/content/Intent;->setClassName(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 
-    .line 90
+    .line 99
     invoke-virtual {p0, v1}, Lcom/admobvn/inject/AdmobInject;->startActivity(Landroid/content/Intent;)V
 
-    .line 91
+    .line 100
     invoke-virtual {p0}, Lcom/admobvn/inject/AdmobInject;->finish()V
 
-    .line 104
+    .line 113
     .end local v1    # "intent":Landroid/content/Intent;
     :goto_0
     return-void
 
-    .line 94
+    .line 103
     :cond_0
     iget-boolean v2, p0, Lcom/admobvn/inject/AdmobInject;->isAdDisplayed:Z
 
     if-nez v2, :cond_1
 
-    .line 95
+    .line 104
     new-instance v2, Lcom/google/android/gms/ads/AdRequest$Builder;
 
     invoke-direct {v2}, Lcom/google/android/gms/ads/AdRequest$Builder;-><init>()V
@@ -311,36 +320,36 @@
 
     move-result-object v0
 
-    .line 96
+    .line 105
     .local v0, "adRequest":Lcom/google/android/gms/ads/AdRequest;
     iget-object v2, p0, Lcom/admobvn/inject/AdmobInject;->interstitial:Lcom/google/android/gms/ads/InterstitialAd;
 
     invoke-virtual {v2, v0}, Lcom/google/android/gms/ads/InterstitialAd;->loadAd(Lcom/google/android/gms/ads/AdRequest;)V
 
-    .line 97
+    .line 106
     iget-object v2, p0, Lcom/admobvn/inject/AdmobInject;->mCountDownTimer:Landroid/os/CountDownTimer;
 
     invoke-virtual {v2}, Landroid/os/CountDownTimer;->start()Landroid/os/CountDownTimer;
 
     goto :goto_0
 
-    .line 99
+    .line 108
     .end local v0    # "adRequest":Lcom/google/android/gms/ads/AdRequest;
     :cond_1
     new-instance v1, Landroid/content/Intent;
 
     invoke-direct {v1}, Landroid/content/Intent;-><init>()V
 
-    .line 100
+    .line 109
     .restart local v1    # "intent":Landroid/content/Intent;
     iget-object v2, p0, Lcom/admobvn/inject/AdmobInject;->className:Ljava/lang/String;
 
     invoke-virtual {v1, p0, v2}, Landroid/content/Intent;->setClassName(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 
-    .line 101
+    .line 110
     invoke-virtual {p0, v1}, Lcom/admobvn/inject/AdmobInject;->startActivity(Landroid/content/Intent;)V
 
-    .line 102
+    .line 111
     invoke-virtual {p0}, Lcom/admobvn/inject/AdmobInject;->finish()V
 
     goto :goto_0
@@ -348,21 +357,83 @@
 
 
 # virtual methods
+.method public onBackPressed()V
+    .locals 2
+
+    .prologue
+    .line 136
+    iget-object v1, p0, Lcom/admobvn/inject/AdmobInject;->mCountDownTimer:Landroid/os/CountDownTimer;
+
+    if-eqz v1, :cond_0
+
+    .line 137
+    iget-object v1, p0, Lcom/admobvn/inject/AdmobInject;->mCountDownTimer:Landroid/os/CountDownTimer;
+
+    invoke-virtual {v1}, Landroid/os/CountDownTimer;->cancel()V
+
+    .line 139
+    :cond_0
+    new-instance v0, Landroid/content/Intent;
+
+    invoke-direct {v0}, Landroid/content/Intent;-><init>()V
+
+    .line 140
+    .local v0, "intent":Landroid/content/Intent;
+    iget-object v1, p0, Lcom/admobvn/inject/AdmobInject;->className:Ljava/lang/String;
+
+    invoke-virtual {v0, p0, v1}, Landroid/content/Intent;->setClassName(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
+
+    .line 141
+    invoke-virtual {p0, v0}, Lcom/admobvn/inject/AdmobInject;->startActivity(Landroid/content/Intent;)V
+
+    .line 142
+    invoke-super {p0}, Landroid/app/Activity;->onBackPressed()V
+
+    .line 143
+    return-void
+.end method
+
 .method protected onCreate(Landroid/os/Bundle;)V
-    .locals 0
+    .locals 2
     .param p1, "savedInstanceState"    # Landroid/os/Bundle;
 
     .prologue
-    .line 27
+    .line 31
     invoke-super {p0, p1}, Landroid/app/Activity;->onCreate(Landroid/os/Bundle;)V
 
-    .line 28
+    .line 32
+    new-instance v0, Lcom/google/android/gms/ads/AdView;
+
+    invoke-direct {v0, p0}, Lcom/google/android/gms/ads/AdView;-><init>(Landroid/content/Context;)V
+
+    iput-object v0, p0, Lcom/admobvn/inject/AdmobInject;->adView:Lcom/google/android/gms/ads/AdView;
+
+    .line 33
+    iget-object v0, p0, Lcom/admobvn/inject/AdmobInject;->adView:Lcom/google/android/gms/ads/AdView;
+
+    sget-object v1, Lcom/google/android/gms/ads/AdSize;->LARGE_BANNER:Lcom/google/android/gms/ads/AdSize;
+
+    invoke-virtual {v0, v1}, Lcom/google/android/gms/ads/AdView;->setAdSize(Lcom/google/android/gms/ads/AdSize;)V
+
+    .line 34
+    iget-object v0, p0, Lcom/admobvn/inject/AdmobInject;->adView:Lcom/google/android/gms/ads/AdView;
+
+    iget-object v1, p0, Lcom/admobvn/inject/AdmobInject;->adId:Ljava/lang/String;
+
+    invoke-virtual {v0, v1}, Lcom/google/android/gms/ads/AdView;->setAdUnitId(Ljava/lang/String;)V
+
+    .line 35
+    iget-object v0, p0, Lcom/admobvn/inject/AdmobInject;->adView:Lcom/google/android/gms/ads/AdView;
+
+    invoke-virtual {p0, v0}, Lcom/admobvn/inject/AdmobInject;->setContentView(Landroid/view/View;)V
+
+    .line 36
     invoke-direct {p0}, Lcom/admobvn/inject/AdmobInject;->initTimer()V
 
-    .line 29
+    .line 37
     invoke-direct {p0}, Lcom/admobvn/inject/AdmobInject;->initAd()V
 
-    .line 30
+    .line 38
     return-void
 .end method
 
@@ -370,21 +441,21 @@
     .locals 1
 
     .prologue
-    .line 46
+    .line 54
     iget-object v0, p0, Lcom/admobvn/inject/AdmobInject;->mCountDownTimer:Landroid/os/CountDownTimer;
 
     if-eqz v0, :cond_0
 
-    .line 47
+    .line 55
     iget-object v0, p0, Lcom/admobvn/inject/AdmobInject;->mCountDownTimer:Landroid/os/CountDownTimer;
 
     invoke-virtual {v0}, Landroid/os/CountDownTimer;->cancel()V
 
-    .line 49
+    .line 57
     :cond_0
     invoke-super {p0}, Landroid/app/Activity;->onPause()V
 
-    .line 50
+    .line 58
     return-void
 .end method
 
@@ -392,21 +463,21 @@
     .locals 1
 
     .prologue
-    .line 36
+    .line 44
     invoke-super {p0}, Landroid/app/Activity;->onResume()V
 
-    .line 37
+    .line 45
     iget-object v0, p0, Lcom/admobvn/inject/AdmobInject;->mCountDownTimer:Landroid/os/CountDownTimer;
 
     if-nez v0, :cond_0
 
-    .line 38
+    .line 46
     invoke-direct {p0}, Lcom/admobvn/inject/AdmobInject;->initTimer()V
 
-    .line 40
+    .line 48
     :cond_0
     invoke-direct {p0}, Lcom/admobvn/inject/AdmobInject;->startGame()V
 
-    .line 41
+    .line 49
     return-void
 .end method
