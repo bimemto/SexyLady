@@ -608,6 +608,11 @@ public class Main extends JFrame implements ActionListener {
 	}
 
 	private void rock() {
+		btnBrowseAPK.setEnabled(false);
+		btnBrowseKeystore.setEnabled(false);
+		btnChoose.setEnabled(false);
+		btnChooseSmali.setEnabled(false);
+		btnRock.setEnabled(false);
 		textPane.setText("");
 		projectPath = inputAPKPath.substring(0, inputAPKPath.length() - 4);
 		afterBuildApkName = inputAPKPath.substring(inputAPKPath.lastIndexOf("/"), inputAPKPath.length());
@@ -653,6 +658,11 @@ public class Main extends JFrame implements ActionListener {
 		deleteDirectory(new File(projectPath));
 		deleteApk(new File(inputAPKPath));
 		JOptionPane.showMessageDialog(null, "Inject finished");
+		btnBrowseAPK.setEnabled(true);
+		btnBrowseKeystore.setEnabled(true);
+		btnChoose.setEnabled(true);
+		btnChooseSmali.setEnabled(true);
+		btnRock.setEnabled(true);
 	}
 
 	private boolean deleteDirectory(File directory) {
